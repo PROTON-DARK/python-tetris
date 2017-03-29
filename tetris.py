@@ -20,6 +20,8 @@ class Board(object):
         b_x = 1
         self.height = 20
         self.width = 10
+        self.y_limit = self.height - 1
+        self.x_limit = self.width - 1
 
         self.state = []
 
@@ -66,6 +68,17 @@ class Piece(object):
     def get_cords(self):
         return [(self.y + y, self.x + x) for (y, x) in self.layouts[self.orientation]]
 
+    def get_new_cords(self, y_delta, x_delta):
+        return [(y + y_delta, x + x_delta) for (y, x) in self.get_cords()]
+
+    def bounds_valid(self, y_delta, x_delta):
+        for cord in self.get_new_cords(y_delta, x_delta):
+            row = cord[0]
+            col = cord[1]
+            if row < 0 or row > self.board.y_limit or col < 0 or col > self.board.x_limit:
+                return False
+        return True
+
     def draw(self):
         self.board.update_blocks(self.color, self.get_cords())
 
@@ -73,7 +86,25 @@ class Piece(object):
         self.board.update_blocks(curses.COLOR_BLACK, self.get_cords())
 
     def rotate(self):
+        self.clear()
         self.orientation = (self.orientation + 1) % len(self.layouts)
+        self.draw()
+
+    def move(self, y_delta, x_delta):
+        if self.bounds_valid(y_delta, x_delta):
+            self.clear()
+            self.y += y_delta
+            self.x += x_delta
+            self.draw()
+
+    def move_left(self):
+        self.move(0, -1)
+
+    def move_right(self):
+        self.move(0, 1)
+
+    def move_down(self):
+        self.move(1, 0)
 
 class Piece_T(Piece):
     def __init__(self, board):
@@ -92,56 +123,22 @@ def tetris_main(stdscr):
 #    curses.noecho()
 
     b = Board(stdscr) 
-  
+
     p = Piece_T(b)
-    p.draw()
-    time.sleep(1)
-    p.clear()
-    time.sleep(1)
 
-    p.rotate()
     p.draw()
-    time.sleep(1)
-    p.clear()
-    time.sleep(1)
 
-    p.rotate()
-    p.draw()
-    time.sleep(1)
-    p.clear()
-    time.sleep(1)
-
-    p.rotate()
-    p.draw()
-    time.sleep(1)
-    p.clear()
-    time.sleep(1)
-
-    p.rotate()
-    p.draw()
-    time.sleep(1)
-    p.clear()
-    time.sleep(1)
-
-    p.rotate()
-    p.draw()
-    time.sleep(1)
-    p.clear()
-    time.sleep(1)
-
-    p.rotate()
-    p.draw()
-    time.sleep(1)
-    p.clear()
-    time.sleep(1)
-
-    p.rotate()
-    p.draw()
-    time.sleep(1)
-
-    #cords = [(0,5), (0,6), (1,5), (1,6)] 
-    #b.update_blocks(curses.COLOR_YELLOW, cords)
- 
-    time.sleep(60)
+    while True:
+        c = stdscr.getch()
+        if c == ord('q'):
+            break
+        if c == curses.KEY_UP:
+            p.rotate()
+        if c == curses.KEY_DOWN:
+            p.move_down()
+        if c == curses.KEY_LEFT:
+            p.move_left()
+        if c == curses.KEY_RIGHT:
+            p.move_right()
 
 curses.wrapper(tetris_main)
