@@ -133,14 +133,24 @@ def tetris_main(stdscr):
 
     p.draw()
 
+    curses.halfdelay(1)
+
+    t1 = time.time()
+    d = 0.5
+
     while True:
         c = stdscr.getch()
+        t2 = time.time()
+        if t2 - t1 > d:
+            t1 = t2
+            p.move_down()
+        elif c == curses.KEY_DOWN:
+            p.move_down()
+
         if c == ord('q'):
             break
         if c == curses.KEY_UP:
             p.rotate()
-        if c == curses.KEY_DOWN:
-            p.move_down()
         if c == curses.KEY_LEFT:
             p.move_left()
         if c == curses.KEY_RIGHT:
