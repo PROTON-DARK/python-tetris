@@ -39,12 +39,27 @@ class Board(object):
         stdscr.addstr(self.height + 1, 0, "                      ", curses.color_pair(curses.COLOR_WHITE))
         stdscr.refresh()
 
-    def update_blocks(self, color, cords):
+    def clear_blocks(self, cords):
         for cord in cords:
+            row = cord[0]
+            col = cord[1]
+            self.state[row][col] = curses.COLOR_BLACK
+        self.draw_board()
+
+    def update_blocks(self, color, new_cords, old_cords=[]):
+        for cord in set(new_cords) - set(old_cords):
+            row = cord[0]
+            col = cord[1]
+            if self.state[row][col] != curses.COLOR_BLACK:
+                pass
+                return False
+        self.clear_blocks(old_cords)
+        for cord in new_cords:
             row = cord[0]
             col = cord[1]
             self.state[row][col] = color
         self.draw_board()
+        return True
 
     def draw_board(self):
         #self.board.addstr(0, 10, "  ", curses.color_pair(self.state[0][5]))
@@ -54,6 +69,12 @@ class Board(object):
                 self.board.insstr(row, col * 2, "  ", curses.color_pair(self.state[row][col]))
         self.board.refresh()
 
+    def clear_full_rows(self):
+        for row in xrange(self.height):
+            if curses.COLOR_BLACK not in self.state[row]:
+                del self.state[row]
+                self.state.insert(0, [curses.COLOR_BLACK] * self.width)
+        self.board.refresh()
 
 class Piece(object):
     def __init__(self):
@@ -78,34 +99,33 @@ class Piece(object):
                 return False
         return True
 
-    def draw(self):
-        self.board.update_blocks(self.color, self.get_cords())
-
-    def clear(self):
-        self.board.update_blocks(curses.COLOR_BLACK, self.get_cords())
+    def draw(self, old_cords=[]):
+        return self.board.update_blocks(self.color, self.get_cords(), old_cords)
 
     def rotate(self):
+        old_cords = self.get_cords()
         new_orientation = (self.orientation + 1) % len(self.layouts)
         if self.bounds_valid(0, 0, new_orientation):
-            self.clear()
             self.orientation = new_orientation
-            self.draw()
+            return self.draw(old_cords)
+        return False
 
     def move(self, y_delta, x_delta):
+        old_cords = self.get_cords()
         if self.bounds_valid(y_delta, x_delta, self.orientation):
-            self.clear()
             self.y += y_delta
             self.x += x_delta
-            self.draw()
+            return self.draw(old_cords)
+        return False
 
     def move_left(self):
-        self.move(0, -1)
+        return self.move(0, -1)
 
     def move_right(self):
-        self.move(0, 1)
+        return self.move(0, 1)
 
     def move_down(self):
-        self.move(1, 0)
+        return self.move(1, 0)
 
 class Piece_T(Piece):
     def __init__(self, board):
@@ -139,10 +159,12 @@ def tetris_main(stdscr):
         t2 = time.time()
         if t2 - t1 > d:
             t1 = t2
-            p.move_down()
+            if not p.move_down():
+                p = Piece_T(b)
         elif c == curses.KEY_DOWN:
-            p.move_down()
-
+            if not p.move_down():
+                b.clear_full_rows()
+                p = Piece_T(b)
         if c == ord('q'):
             break
         if c == curses.KEY_UP:
