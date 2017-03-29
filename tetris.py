@@ -63,6 +63,15 @@ class Piece(object):
         self.y = 1
         self.orientation = 0
 
+    def get_cords(self):
+        return [(self.y + y, self.x + x) for (y, x) in self.layouts[self.orientation]]
+
+    def draw(self):
+        self.board.update_blocks(self.color, self.get_cords())
+
+    def clear(self):
+        self.board.update_blocks(curses.COLOR_BLACK, self.get_cords())
+
     def rotate(self):
         self.orientation = (self.orientation + 1) % len(self.layouts)
 
@@ -77,15 +86,6 @@ class Piece_T(Piece):
             [(0, 0), (-1, 0), (0, -1), (1, 0)],
         ]
         self.color = curses.COLOR_MAGENTA
-
-    def get_cords(self):
-        return [(self.y + y, self.x + x) for (y, x) in self.layouts[self.orientation]] 
-
-    def draw(self):
-        self.board.update_blocks(self.color, self.get_cords())
-
-    def clear(self):
-        self.board.update_blocks(curses.COLOR_BLACK, self.get_cords())
 
 def tetris_main(stdscr):
 #    stdscr = curses.initscr()
