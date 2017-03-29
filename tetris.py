@@ -66,16 +66,19 @@ class Piece(object):
         self.orientation = 0
 
     def get_cords(self):
-        return [(self.y + y, self.x + x) for (y, x) in self.layouts[self.orientation]]
+        return [(self.y + y, self.x + x) for (y, x)
+                in self.layouts[self.orientation]]
 
-    def get_new_cords(self, y_delta, x_delta):
-        return [(y + y_delta, x + x_delta) for (y, x) in self.get_cords()]
+    def get_new_cords(self, y_delta, x_delta, orientation):
+        return [(self.y + y + y_delta, self.x + x + x_delta) for (y, x)
+                in self.layouts[orientation]]
 
-    def bounds_valid(self, y_delta, x_delta):
-        for cord in self.get_new_cords(y_delta, x_delta):
+    def bounds_valid(self, y_delta, x_delta, orientation):
+        for cord in self.get_new_cords(y_delta, x_delta, orientation):
             row = cord[0]
             col = cord[1]
-            if row < 0 or row > self.board.y_limit or col < 0 or col > self.board.x_limit:
+            if (row < 0 or row > self.board.y_limit or
+                col < 0 or col > self.board.x_limit):
                 return False
         return True
 
@@ -86,12 +89,14 @@ class Piece(object):
         self.board.update_blocks(curses.COLOR_BLACK, self.get_cords())
 
     def rotate(self):
-        self.clear()
-        self.orientation = (self.orientation + 1) % len(self.layouts)
-        self.draw()
+        new_orientation = (self.orientation + 1) % len(self.layouts)
+        if self.bounds_valid(0, 0, new_orientation):
+            self.clear()
+            self.orientation = new_orientation
+            self.draw()
 
     def move(self, y_delta, x_delta):
-        if self.bounds_valid(y_delta, x_delta):
+        if self.bounds_valid(y_delta, x_delta, self.orientation):
             self.clear()
             self.y += y_delta
             self.x += x_delta
