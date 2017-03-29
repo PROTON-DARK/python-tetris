@@ -31,7 +31,7 @@ class Board(object):
         self.old_blocks = copy.deepcopy(self.state)
         self.board = curses.newwin(self.height, self.width * 2, b_y, b_x)
 
-        stdscr.addstr(b_y-1, b_x-1, "                      ", curses.color_pair(curses.COLOR_WHITE)) 
+        stdscr.addstr(b_y-1, b_x-1, "                      ", curses.color_pair(curses.COLOR_WHITE))
         for i in range(1, self.height + 1):
             stdscr.addstr(i, 0, " ", curses.color_pair(curses.COLOR_WHITE))
             stdscr.addstr(i, 2, str(i), curses.color_pair(curses.COLOR_WHITE))
@@ -122,7 +122,7 @@ def tetris_main(stdscr):
 #    stdscr = curses.initscr()
 #    curses.noecho()
 
-    b = Board(stdscr) 
+    b = Board(stdscr)
 
     p = Piece_T(b)
 
