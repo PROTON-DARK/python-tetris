@@ -39,10 +39,6 @@ class Board(object):
         stdscr.addstr(self.height + 1, 0, "                      ", curses.color_pair(curses.COLOR_WHITE))
         stdscr.refresh()
 
-#    def draw_block(self, y, x, color):
-#        self.board.addstr(y, (x*2), "  ", curses.color_pair(color))
-#        self.board.refresh()
-
     def update_blocks(self, color, cords):
         for cord in cords:
             row = cord[0]
