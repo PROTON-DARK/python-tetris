@@ -81,11 +81,22 @@ class Board(object):
         self.board.refresh()
 
     def get_random_piece(self):
-        r = random.randint(0,1)
+        r = random.randint(0,6)
         if r == 0:
             return Piece_T(self)
         elif r == 1:
             return Piece_I(self)
+        elif r == 2:
+            return Piece_S(self)
+        elif r == 3:
+            return Piece_Z(self)
+        elif r == 4:
+            return Piece_O(self)
+        elif r == 5:
+            return Piece_L(self)
+        elif r == 6:
+            return Piece_J(self)
+
 
     def get_piece(self):
         piece = self.next_piece
@@ -218,6 +229,54 @@ class Piece_I(Piece):
             [(-1, 0), (0, 0), (1, 0), (2, 0)],
         ]
         self.color = curses.COLOR_CYAN
+
+class Piece_S(Piece):
+    def __init__(self, board):
+        super(Piece_S, self).__init__(board)
+        self.layouts = [
+            [(-1, 0), (-1, 1), (0, -1), (0, 0)],
+            [(-1, 0), ( 0, 0), (0,  1), (1, 1)],
+        ]
+        self.color = curses.COLOR_GREEN
+
+class Piece_Z(Piece):
+    def __init__(self, board):
+        super(Piece_Z, self).__init__(board)
+        self.layouts = [
+            [(-1, -1), (-1, 0), (0, 0), (0, 1)],
+            [(-1,  1), ( 0, 0), (0, 1), (1, 0)],
+        ]
+        self.color = curses.COLOR_RED
+
+class Piece_O(Piece):
+    def __init__(self, board):
+        super(Piece_O, self).__init__(board)
+        self.layouts = [
+            [(-1, -1), (-1, 0), (0, -1), (0, 0)]
+        ]
+        self.color = curses.COLOR_WHITE
+
+class Piece_L(Piece):
+    def __init__(self, board):
+        super(Piece_L, self).__init__(board)
+        self.layouts = [
+            [(-1,  1), ( 0, -1), (0, 0), (0,  1)],
+            [(-1,  0), ( 0,  0), (1, 0), (1,  1)],
+            [(0,  -1), ( 0,  0), (0, 1), (1, -1)],
+            [(-1, -1), (-1,  0), (0, 0), (1,  0)],
+        ]
+        self.color = curses.COLOR_YELLOW
+
+class Piece_J(Piece):
+    def __init__(self, board):
+        super(Piece_J, self).__init__(board)
+        self.layouts = [
+            [(-1, -1), (0, -1), (0,  0), (0, 1)],
+            [(-1,  0), (-1, 1), (0,  0), (1, 0)],
+            [(0,  -1), (0,  0), (0,  1), (1, 1)],
+            [(-1,  0), (0,  0), (1, -1), (1, 0)],
+        ]
+        self.color = curses.COLOR_BLUE
 
 def tetris_main(stdscr):
     b = Board(stdscr)
