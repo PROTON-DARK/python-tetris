@@ -25,6 +25,8 @@ class Board(object):
         self.width = 10
         self.y_limit = self.height - 1
         self.x_limit = self.width - 1
+        self.speed = 1
+        self.delay = 1
 
         self.state = []
         self.total_rows_cleared = 0
@@ -45,13 +47,24 @@ class Board(object):
         self.stdscr.addstr(self.height + 1, 0, "                      ", curses.color_pair(curses.COLOR_WHITE))
         self.stdscr.refresh()
 
-        self.info_win = curses.newwin(1, 30, 0, self.width*2 + 5)
+        self.info_win = curses.newwin(3, 30, 0, self.width*2 + 5)
         self.info_win.addstr(0, 0, "SCORE: ")
+        self.info_win.addstr(1, 0, "SPEED: " + str(self.speed).rjust(7))
+        self.info_win.addstr(2, 0, " ROWS: " + str(self.total_rows_cleared).rjust(7))
         self.increase_score(0)
 
         self.preview = curses.newwin(3, 8, 4, self.width*2 + 5)
         self.preview.addstr(0, 1, "NEXT:")
         self.preview.refresh()
+
+    def increase_total_rows_cleared(self):
+        self.total_rows_cleared += 1
+        # Increase speed by 1 for every divisor number of rows cleared
+        self.speed = 1 + self.total_rows_cleared/10
+        self.delay = 1.0/self.speed
+        self.info_win.addstr(1, 7, str(self.speed).rjust(7))
+        self.info_win.addstr(2, 7, str(self.total_rows_cleared).rjust(7))
+        self.info_win.refresh()
 
     def increase_score(self, new_points):
         self.score += new_points
@@ -103,6 +116,7 @@ class Board(object):
         rows_cleared = 0
         for row in xrange(self.height):
             if curses.COLOR_BLACK not in self.state[row]:
+                self.increase_total_rows_cleared()
                 rows_cleared += 1
                 del self.state[row]
                 self.state.insert(0, [curses.COLOR_BLACK] * self.width)
@@ -141,12 +155,11 @@ class Board(object):
         curses.halfdelay(1)
 
         t1 = time.time()
-        d = 0.5
 
         while True:
             c = self.stdscr.getch()
             t2 = time.time()
-            if t2 - t1 > d:
+            if t2 - t1 > self.delay:
                 t1 = t2
                 if not p.move_down():
                     self.clear_full_rows()
