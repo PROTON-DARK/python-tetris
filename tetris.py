@@ -38,7 +38,6 @@ class Board(object):
         self.stdscr.addstr(b_y-1, b_x-1, "                      ", curses.color_pair(curses.COLOR_WHITE))
         for i in range(1, self.height + 1):
             self.stdscr.addstr(i, 0, " ", curses.color_pair(curses.COLOR_WHITE))
-            self.stdscr.addstr(i, 2, str(i), curses.color_pair(curses.COLOR_WHITE))
             self.stdscr.addstr(i, (self.width * 2) + 1, " ", curses.color_pair(curses.COLOR_WHITE))
         self.stdscr.addstr(self.height + 1, 0, "                      ", curses.color_pair(curses.COLOR_WHITE))
         self.stdscr.refresh()
