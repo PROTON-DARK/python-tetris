@@ -99,7 +99,6 @@ class Board(object):
         self.preview.refresh()
 
     def draw_board(self):
-        #self.board.addstr(0, 10, "  ", curses.color_pair(self.state[0][5]))
         for row in range(self.height):
             for col in range(self.width):
                 pass
