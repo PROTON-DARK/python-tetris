@@ -6,6 +6,8 @@ import copy
 
 class Board(object):
     def __init__(self, stdscr):
+        self.stdscr = stdscr
+
         curses.curs_set(0)
         #curses.init_pair(curses.COLOR_BLACK, curses.COLOR_BLACK, curses.COLOR_BLACK)
         curses.init_pair(curses.COLOR_WHITE, curses.COLOR_BLACK, curses.COLOR_WHITE)
@@ -31,13 +33,13 @@ class Board(object):
         self.old_blocks = copy.deepcopy(self.state)
         self.board = curses.newwin(self.height, self.width * 2, b_y, b_x)
 
-        stdscr.addstr(b_y-1, b_x-1, "                      ", curses.color_pair(curses.COLOR_WHITE))
+        self.stdscr.addstr(b_y-1, b_x-1, "                      ", curses.color_pair(curses.COLOR_WHITE))
         for i in range(1, self.height + 1):
-            stdscr.addstr(i, 0, " ", curses.color_pair(curses.COLOR_WHITE))
-            stdscr.addstr(i, 2, str(i), curses.color_pair(curses.COLOR_WHITE))
-            stdscr.addstr(i, (self.width * 2) + 1, " ", curses.color_pair(curses.COLOR_WHITE))
-        stdscr.addstr(self.height + 1, 0, "                      ", curses.color_pair(curses.COLOR_WHITE))
-        stdscr.refresh()
+            self.stdscr.addstr(i, 0, " ", curses.color_pair(curses.COLOR_WHITE))
+            self.stdscr.addstr(i, 2, str(i), curses.color_pair(curses.COLOR_WHITE))
+            self.stdscr.addstr(i, (self.width * 2) + 1, " ", curses.color_pair(curses.COLOR_WHITE))
+        self.stdscr.addstr(self.height + 1, 0, "                      ", curses.color_pair(curses.COLOR_WHITE))
+        self.stdscr.refresh()
 
     def clear_blocks(self, cords):
         for cord in cords:
@@ -75,6 +77,36 @@ class Board(object):
                 del self.state[row]
                 self.state.insert(0, [curses.COLOR_BLACK] * self.width)
         self.board.refresh()
+
+    def main(self):
+        p = Piece_T(self)
+
+        p.draw()
+
+        curses.halfdelay(1)
+
+        t1 = time.time()
+        d = 0.5
+
+        while True:
+            c = self.stdscr.getch()
+            t2 = time.time()
+            if t2 - t1 > d:
+                t1 = t2
+                if not p.move_down():
+                    p = Piece_T(self)
+            elif c == curses.KEY_DOWN:
+                if not p.move_down():
+                    self.clear_full_rows()
+                    p = Piece_T(self)
+            if c == ord('q'):
+                break
+            if c == curses.KEY_UP:
+                p.rotate()
+            if c == curses.KEY_LEFT:
+                p.move_left()
+            if c == curses.KEY_RIGHT:
+                p.move_right()
 
 class Piece(object):
     def __init__(self):
@@ -140,38 +172,7 @@ class Piece_T(Piece):
         self.color = curses.COLOR_MAGENTA
 
 def tetris_main(stdscr):
-#    stdscr = curses.initscr()
-#    curses.noecho()
-
     b = Board(stdscr)
-
-    p = Piece_T(b)
-
-    p.draw()
-
-    curses.halfdelay(1)
-
-    t1 = time.time()
-    d = 0.5
-
-    while True:
-        c = stdscr.getch()
-        t2 = time.time()
-        if t2 - t1 > d:
-            t1 = t2
-            if not p.move_down():
-                p = Piece_T(b)
-        elif c == curses.KEY_DOWN:
-            if not p.move_down():
-                b.clear_full_rows()
-                p = Piece_T(b)
-        if c == ord('q'):
-            break
-        if c == curses.KEY_UP:
-            p.rotate()
-        if c == curses.KEY_LEFT:
-            p.move_left()
-        if c == curses.KEY_RIGHT:
-            p.move_right()
+    b.main()
 
 curses.wrapper(tetris_main)
