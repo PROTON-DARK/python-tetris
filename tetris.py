@@ -10,13 +10,20 @@ class Board(object):
         self.stdscr = stdscr
 
         curses.curs_set(0)
-        curses.init_pair(curses.COLOR_WHITE, curses.COLOR_BLACK, curses.COLOR_WHITE)
-        curses.init_pair(curses.COLOR_CYAN, curses.COLOR_BLACK, curses.COLOR_CYAN)
-        curses.init_pair(curses.COLOR_BLUE, curses.COLOR_BLACK, curses.COLOR_BLUE)
-        curses.init_pair(curses.COLOR_YELLOW, curses.COLOR_BLACK, curses.COLOR_YELLOW)
-        curses.init_pair(curses.COLOR_GREEN, curses.COLOR_BLACK, curses.COLOR_GREEN)
-        curses.init_pair(curses.COLOR_MAGENTA, curses.COLOR_BLACK, curses.COLOR_MAGENTA)
-        curses.init_pair(curses.COLOR_RED, curses.COLOR_BLACK, curses.COLOR_RED)
+        curses.init_pair(curses.COLOR_WHITE, curses.COLOR_BLACK,
+                         curses.COLOR_WHITE)
+        curses.init_pair(curses.COLOR_CYAN, curses.COLOR_BLACK,
+                         curses.COLOR_CYAN)
+        curses.init_pair(curses.COLOR_BLUE, curses.COLOR_BLACK,
+                         curses.COLOR_BLUE)
+        curses.init_pair(curses.COLOR_YELLOW, curses.COLOR_BLACK,
+                         curses.COLOR_YELLOW)
+        curses.init_pair(curses.COLOR_GREEN, curses.COLOR_BLACK,
+                         curses.COLOR_GREEN)
+        curses.init_pair(curses.COLOR_MAGENTA, curses.COLOR_BLACK,
+                         curses.COLOR_MAGENTA)
+        curses.init_pair(curses.COLOR_RED, curses.COLOR_BLACK,
+                         curses.COLOR_RED)
         b_y = 1
         b_x = 1
         self.height = 20
@@ -36,17 +43,22 @@ class Board(object):
 
         self.board = curses.newwin(self.height, self.width * 2, b_y, b_x)
 
-        self.stdscr.addstr(b_y-1, b_x-1, "                      ", curses.color_pair(curses.COLOR_WHITE))
+        self.stdscr.addstr(b_y-1, b_x-1, "                      ",
+                           curses.color_pair(curses.COLOR_WHITE))
         for i in range(1, self.height + 1):
-            self.stdscr.addstr(i, 0, " ", curses.color_pair(curses.COLOR_WHITE))
-            self.stdscr.addstr(i, (self.width * 2) + 1, " ", curses.color_pair(curses.COLOR_WHITE))
-        self.stdscr.addstr(self.height + 1, 0, "                      ", curses.color_pair(curses.COLOR_WHITE))
+            self.stdscr.addstr(i, 0, " ",
+                               curses.color_pair(curses.COLOR_WHITE))
+            self.stdscr.addstr(i, (self.width * 2) + 1, " ",
+                               curses.color_pair(curses.COLOR_WHITE))
+        self.stdscr.addstr(self.height + 1, 0, "                      ",
+                           curses.color_pair(curses.COLOR_WHITE))
         self.stdscr.refresh()
 
         self.info_win = curses.newwin(3, 30, 0, self.width*2 + 5)
         self.info_win.addstr(0, 0, "SCORE: ")
         self.info_win.addstr(1, 0, "SPEED: " + str(self.speed).rjust(7))
-        self.info_win.addstr(2, 0, " ROWS: " + str(self.total_rows_cleared).rjust(7))
+        self.info_win.addstr(2, 0,
+                             " ROWS: " + str(self.total_rows_cleared).rjust(7))
         self.increase_score(0)
 
         self.preview = curses.newwin(3, 8, 4, self.width*2 + 5)
@@ -91,7 +103,7 @@ class Board(object):
     def draw_preview(self):
         for row in xrange(1, 3):
             self.preview.insstr(row, 0, "        ",
-                curses.color_pair(curses.COLOR_BLACK))
+                                curses.color_pair(curses.COLOR_BLACK))
         for cord in self.next_piece.get_preview_cords():
             y = 2 + cord[0]
             x = 2 + cord[1] * 2
@@ -103,7 +115,8 @@ class Board(object):
         for row in range(self.height):
             for col in range(self.width):
                 pass
-                self.board.insstr(row, col * 2, "  ", curses.color_pair(self.state[row][col]))
+                self.board.insstr(row, col * 2, "  ",
+                                  curses.color_pair(self.state[row][col]))
         self.board.refresh()
 
     def clear_full_rows(self):
@@ -202,7 +215,7 @@ class Piece(object):
 
     def get_cords(self):
         return [(self.y + y, self.x + x) for (y, x)
-            in self.layouts[self.orientation]]
+                in self.layouts[self.orientation]]
 
     def get_new_cords(self, y_delta, x_delta, orientation):
         return [(self.y + y + y_delta, self.x + x + x_delta) for (y, x)
@@ -221,7 +234,8 @@ class Piece(object):
         return True
 
     def draw(self, old_cords=[]):
-        return self.board.update_blocks(self.color, self.get_cords(), old_cords)
+        return self.board.update_blocks(self.color, self.get_cords(),
+                                        old_cords)
 
     def rotate(self):
         old_cords = self.get_cords()
@@ -323,10 +337,10 @@ class Piece_J(Piece):
     def __init__(self, board):
         super(Piece_J, self).__init__(board)
         self.layouts = [
-        [(-1, -1), (0, -1), (0,  0), (0, 1)],
-        [(-1,  0), (-1, 1), (0,  0), (1, 0)],
-        [(0,  -1), (0,  0), (0,  1), (1, 1)],
-        [(-1,  0), (0,  0), (1, -1), (1, 0)],
+            [(-1, -1), (0, -1), (0, 0), (0, 1)],
+            [(-1,  0), (-1, 1), (0, 0), (1, 0)],
+            [(0, -1), (0, 0), (0, 1), (1, 1)],
+            [(-1, 0), (0, 0), (1, -1), (1, 0)],
         ]
         self.color = curses.COLOR_BLUE
 
