@@ -107,6 +107,11 @@ class Board(object):
                 p.move_left()
             if c == curses.KEY_RIGHT:
                 p.move_right()
+            if c == ord(' '):
+                while p.move_down():
+                    pass
+                self.clear_full_rows()
+                p = Piece_T(self)
 
 class Piece(object):
     def __init__(self):
