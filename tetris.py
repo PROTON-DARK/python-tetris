@@ -121,7 +121,7 @@ class Board(object):
                 del self.state[row]
                 self.state.insert(0, [curses.COLOR_BLACK] * self.width)
         self.board.refresh()
-        self.increase_score(1000 * rows_cleared * rows_cleared)
+        self.increase_score(1000 * rows_cleared * rows_cleared * self.speed)
 
     def get_random_piece(self):
         r = random.randint(0,6)
