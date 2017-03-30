@@ -112,10 +112,15 @@ class Board(object):
             if curses.COLOR_BLACK not in self.state[row]:
                 self.increase_total_rows_cleared()
                 rows_cleared += 1
+                self.state[row] = [curses.COLOR_WHITE] * self.width
+        self.draw_board()
+        time.sleep(0.1)
+        self.increase_score(1000 * rows_cleared * rows_cleared * self.speed)
+        for row in xrange(self.height):
+            if curses.COLOR_BLACK not in self.state[row]:
                 del self.state[row]
                 self.state.insert(0, [curses.COLOR_BLACK] * self.width)
-        self.board.refresh()
-        self.increase_score(1000 * rows_cleared * rows_cleared * self.speed)
+        self.draw_board()
 
     def get_random_piece(self):
         r = random.randint(0,6)
