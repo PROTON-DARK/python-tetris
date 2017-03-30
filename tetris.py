@@ -96,10 +96,14 @@ class Board(object):
                 if not p.move_down():
                     self.clear_full_rows()
                     p = Piece_T(self)
+                    if not p.draw():
+                        break
             elif c == curses.KEY_DOWN:
                 if not p.move_down():
                     self.clear_full_rows()
                     p = Piece_T(self)
+                    if not p.draw():
+                        break
             if c == ord('q'):
                 break
             if c == curses.KEY_UP:
@@ -113,6 +117,8 @@ class Board(object):
                     pass
                 self.clear_full_rows()
                 p = Piece_T(self)
+                if not p.draw():
+                    break
 
 class Piece(object):
     def __init__(self):
