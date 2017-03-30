@@ -79,7 +79,6 @@ class Board(object):
             row = cord[0]
             col = cord[1]
             if self.state[row][col] != curses.COLOR_BLACK:
-                pass
                 return False
         self.clear_blocks(old_cords)
         for cord in new_cords:
