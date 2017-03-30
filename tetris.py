@@ -3,6 +3,7 @@
 import curses
 import time
 import copy
+import random
 
 class Board(object):
     def __init__(self, stdscr):
@@ -26,6 +27,7 @@ class Board(object):
         self.x_limit = self.width - 1
 
         self.state = []
+        self.next_piece = self.get_random_piece()
 
         for row in range(self.height):
             self.state.append([curses.COLOR_BLACK] * self.width)
@@ -78,8 +80,20 @@ class Board(object):
                 self.state.insert(0, [curses.COLOR_BLACK] * self.width)
         self.board.refresh()
 
+    def get_random_piece(self):
+        r = random.randint(0,1)
+        if r == 0:
+            return Piece_T(self)
+        elif r == 1:
+            return Piece_I(self)
+
+    def get_piece(self):
+        piece = self.next_piece
+        self.next_piece = self.get_random_piece()
+        return piece
+
     def main(self):
-        p = Piece_T(self)
+        p = self.get_piece()
 
         p.draw()
 
@@ -95,13 +109,13 @@ class Board(object):
                 t1 = t2
                 if not p.move_down():
                     self.clear_full_rows()
-                    p = Piece_T(self)
+                    p = self.get_piece()
                     if not p.draw():
                         break
             elif c == curses.KEY_DOWN:
                 if not p.move_down():
                     self.clear_full_rows()
-                    p = Piece_T(self)
+                    p = self.get_piece()
                     if not p.draw():
                         break
             if c == ord('q'):
@@ -116,7 +130,7 @@ class Board(object):
                 while p.move_down():
                     pass
                 self.clear_full_rows()
-                p = Piece_T(self)
+                p = self.get_piece()
                 if not p.draw():
                     break
 
@@ -182,6 +196,15 @@ class Piece_T(Piece):
             [(0, 0), (-1, 0), (0, -1), (1, 0)],
         ]
         self.color = curses.COLOR_MAGENTA
+
+class Piece_I(Piece):
+    def __init__(self, board):
+        super(Piece_I, self).__init__(board)
+        self.layouts = [
+            [(0, -1), (0, 0), (0, 1), (0, 2)],
+            [(-1, 0), (0, 0), (1, 0), (2, 0)],
+        ]
+        self.color = curses.COLOR_CYAN
 
 def tetris_main(stdscr):
     b = Board(stdscr)
