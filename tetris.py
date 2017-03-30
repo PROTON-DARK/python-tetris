@@ -121,7 +121,8 @@ class Board(object):
                     break
 
 class Piece(object):
-    def __init__(self):
+    def __init__(self, board):
+        self.board = board
         self.x = 5
         self.y = 1
         self.orientation = 0
@@ -173,8 +174,7 @@ class Piece(object):
 
 class Piece_T(Piece):
     def __init__(self, board):
-        super(Piece_T, self).__init__()
-        self.board = board
+        super(Piece_T, self).__init__(board)
         self.layouts = [
             [(0, 0), (0, -1), (-1, 0), (0, 1)],
             [(0, 0), (-1, 0), (0, 1), (1, 0)],
