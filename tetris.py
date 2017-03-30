@@ -2,7 +2,6 @@
 
 import curses
 import time
-import copy
 import random
 
 class Board(object):
@@ -36,7 +35,6 @@ class Board(object):
         for row in range(self.height):
             self.state.append([curses.COLOR_BLACK] * self.width)
 
-        self.old_blocks = copy.deepcopy(self.state)
         self.board = curses.newwin(self.height, self.width * 2, b_y, b_x)
 
         self.stdscr.addstr(b_y-1, b_x-1, "                      ", curses.color_pair(curses.COLOR_WHITE))
