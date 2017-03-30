@@ -94,6 +94,7 @@ class Board(object):
             if t2 - t1 > d:
                 t1 = t2
                 if not p.move_down():
+                    self.clear_full_rows()
                     p = Piece_T(self)
             elif c == curses.KEY_DOWN:
                 if not p.move_down():
