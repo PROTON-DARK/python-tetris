@@ -134,6 +134,12 @@ class Board(object):
                 if not p.draw():
                     break
 
+        self.stdscr.addstr(2, 6, "GAME OVER!")
+        self.stdscr.addstr(4, 3, "Press Q to QUIT")
+        c = self.stdscr.getch()
+        while c != ord('q') and c != ord('Q'):
+            c = self.stdscr.getch()
+
 class Piece(object):
     def __init__(self, board):
         self.board = board
