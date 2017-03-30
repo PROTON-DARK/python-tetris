@@ -172,7 +172,10 @@ class Piece(object):
         new_orientation = (self.orientation + 1) % len(self.layouts)
         if self.bounds_valid(0, 0, new_orientation):
             self.orientation = new_orientation
-            return self.draw(old_cords)
+            if self.draw(old_cords):
+                return True
+            else:
+                self.orientation = (self.orientation - 1) % len(self.layouts)
         return False
 
     def move(self, y_delta, x_delta):
@@ -180,7 +183,11 @@ class Piece(object):
         if self.bounds_valid(y_delta, x_delta, self.orientation):
             self.y += y_delta
             self.x += x_delta
-            return self.draw(old_cords)
+            if self.draw(old_cords):
+                return True
+            else:
+                self.y -= y_delta
+                self.x -= x_delta
         return False
 
     def move_left(self):
