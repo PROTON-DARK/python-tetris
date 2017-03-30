@@ -49,6 +49,10 @@ class Board(object):
         self.info_win.addstr(0, 0, "SCORE: ")
         self.increase_score(0)
 
+        self.preview = curses.newwin(3, 8, 4, self.width*2 + 5)
+        self.preview.addstr(0, 1, "NEXT:")
+        self.preview.refresh()
+
     def increase_score(self, new_points):
         self.score += new_points
         self.info_win.addstr(0, 7, str(self.score).rjust(7))
@@ -75,6 +79,17 @@ class Board(object):
             self.state[row][col] = color
         self.draw_board()
         return True
+
+    def draw_preview(self):
+        for row in xrange(1, 3):
+            self.preview.insstr(row, 0, "        ",
+                curses.color_pair(curses.COLOR_BLACK))
+        for cord in self.next_piece.get_preview_cords():
+            y = 2 + cord[0]
+            x = 2 + cord[1] * 2
+            color = curses.color_pair(self.next_piece.color)
+            self.preview.insstr(y, x, "  ", color)
+        self.preview.refresh()
 
     def draw_board(self):
         #self.board.addstr(0, 10, "  ", curses.color_pair(self.state[0][5]))
@@ -115,6 +130,7 @@ class Board(object):
     def get_piece(self):
         piece = self.next_piece
         self.next_piece = self.get_random_piece()
+        self.draw_preview()
         return piece
 
     def main(self):
@@ -179,6 +195,9 @@ class Piece(object):
     def get_new_cords(self, y_delta, x_delta, orientation):
         return [(self.y + y + y_delta, self.x + x + x_delta) for (y, x)
                 in self.layouts[orientation]]
+
+    def get_preview_cords(self):
+        return self.layouts[0]
 
     def bounds_valid(self, y_delta, x_delta, orientation):
         for cord in self.get_new_cords(y_delta, x_delta, orientation):
