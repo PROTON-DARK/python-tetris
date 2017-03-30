@@ -27,6 +27,8 @@ class Board(object):
         self.x_limit = self.width - 1
 
         self.state = []
+        self.total_rows_cleared = 0
+        self.score = 0
         self.next_piece = self.get_random_piece()
 
         for row in range(self.height):
@@ -42,6 +44,15 @@ class Board(object):
             self.stdscr.addstr(i, (self.width * 2) + 1, " ", curses.color_pair(curses.COLOR_WHITE))
         self.stdscr.addstr(self.height + 1, 0, "                      ", curses.color_pair(curses.COLOR_WHITE))
         self.stdscr.refresh()
+
+        self.info_win = curses.newwin(1, 30, 0, self.width*2 + 5)
+        self.info_win.addstr(0, 0, "SCORE: ")
+        self.increase_score(0)
+
+    def increase_score(self, new_points):
+        self.score += new_points
+        self.info_win.addstr(0, 7, str(self.score).rjust(7))
+        self.info_win.refresh()
 
     def clear_blocks(self, cords):
         for cord in cords:
@@ -74,11 +85,14 @@ class Board(object):
         self.board.refresh()
 
     def clear_full_rows(self):
+        rows_cleared = 0
         for row in xrange(self.height):
             if curses.COLOR_BLACK not in self.state[row]:
+                rows_cleared += 1
                 del self.state[row]
                 self.state.insert(0, [curses.COLOR_BLACK] * self.width)
         self.board.refresh()
+        self.increase_score(1000 * rows_cleared * rows_cleared)
 
     def get_random_piece(self):
         r = random.randint(0,6)
