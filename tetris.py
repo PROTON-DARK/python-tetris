@@ -139,7 +139,6 @@ class Board(object):
         elif r == 6:
             return Piece_J(self)
 
-
     def get_piece(self):
         piece = self.next_piece
         self.next_piece = self.get_random_piece()
@@ -202,7 +201,7 @@ class Piece(object):
 
     def get_cords(self):
         return [(self.y + y, self.x + x) for (y, x)
-                in self.layouts[self.orientation]]
+            in self.layouts[self.orientation]]
 
     def get_new_cords(self, y_delta, x_delta, orientation):
         return [(self.y + y + y_delta, self.x + x + x_delta) for (y, x)
