@@ -228,8 +228,10 @@ class Piece(object):
         for cord in self.get_new_cords(y_delta, x_delta, orientation):
             row = cord[0]
             col = cord[1]
-            if (row < 0 or row > self.board.y_limit or
-                col < 0 or col > self.board.x_limit):
+            # (( is the only way to silence pep8 :(
+            # https://github.com/PyCQA/pycodestyle/issues/126
+            if ((row < 0 or row > self.board.y_limit or
+                 col < 0 or col > self.board.x_limit)):
                 return False
         return True
 
